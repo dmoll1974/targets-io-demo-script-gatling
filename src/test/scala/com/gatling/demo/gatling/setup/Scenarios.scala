@@ -18,15 +18,15 @@ object Scenarios {
    */
   val acceptanceTestScenario = scenario("acceptanceTestScenario")
     .feed(UsersFeeder.users)
-    .exec(Home.useCase)
-    .repeat(3){
-      exec(AddArticle.useCase)
-    }
-    .repeat(2){
-      exec(AddArticle.useCase)
+    .exitBlockOnFail(
+      exec(Home.useCase)
+      .repeat(2){
+        exec(AddArticle.useCase)
+      }
+      .exec(AddArticle.useCase)
       .exec(OpenArticle.useCase)
-    }
-  /**
+    )
+      /**
    * These are the scenarios run in 'debug' mode.
    */
   val debugScenario = scenario("debug")
