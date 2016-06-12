@@ -279,7 +279,7 @@
             <properties>
                 <applicationSimulation>com.gatling.demo.gatling.helpers.Assertions</applicationSimulation>
                 <dashboardName>NIGHTLY</dashboardName>
-                <testRunId>${env.PARENT_JOB_NAME}-${env.PARENT_BUILD_NUMBER}</testRunId>
+                <testRunId>${PARENT_JOB_NAME}-${PARENT_BUILD_NUMBER}</testRunId>
             </properties>
         </profile>
 
@@ -291,7 +291,7 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                    <testRunId>${env.PARENT_JOB_NAME}-${env.PARENT_BUILD_NUMBER}</testRunId>
+                    <testRunId>${PARENT_JOB_NAME}-${PARENT_BUILD_NUMBER}</testRunId>
             </properties>
         </profile>
 
