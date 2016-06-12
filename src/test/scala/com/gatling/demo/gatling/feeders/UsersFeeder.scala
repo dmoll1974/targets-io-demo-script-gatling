@@ -1,6 +1,5 @@
 package com.gatling.demo.gatling.feeders
 
-import io.gatling.core.result.message.KO
 
 import scala.concurrent.duration._
 
@@ -13,6 +12,6 @@ import io.gatling.jdbc.Predef._
  */
 object UsersFeeder {
 
-  val users = csv("users.csv").circular
+  val users = csv("users.csv").random
 
 }

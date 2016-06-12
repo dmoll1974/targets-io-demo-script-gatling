@@ -2,7 +2,7 @@ package com.gatling.demo.gatling.helpers
 
 import java.nio.file.Path
 
-import io.gatling.core.util.PathHelper._
+import io.gatling.commons.util.PathHelper._
 
 /**
  * Utility object to create the paths used throughout this loadtest script.

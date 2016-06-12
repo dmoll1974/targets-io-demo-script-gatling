@@ -5,7 +5,7 @@ import _root_.io.gatling.core.Predef._
 import _root_.io.gatling.core.scenario.Simulation
 import _root_.io.gatling.http.Predef._
 import io.gatling.core.Predef._
-import io.gatling.core.result.message.KO
+import io.gatling.commons.stats.KO
 import io.gatling.http.Predef._
 
 class Assertions extends Simulation{

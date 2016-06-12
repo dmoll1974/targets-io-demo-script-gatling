@@ -1,0 +1,7 @@
+{
+  "username": "${user}",
+  "password": "${user}Password!",
+  "firstName": "${user}",
+  "lastName": "${user}",
+  "email": "${user}@demo.com"
+}

@@ -17,15 +17,24 @@ object Scenarios {
    * These are the scenarios run in 'normal' mode.
    */
   val acceptanceTestScenario = scenario("acceptanceTestScenario")
-    .exec(HelloWorld.useCase)
-    .exec(PostPeople.useCase)
-    .exec(GetPeople.useCase)
+    .feed(UsersFeeder.users)
+    .exec(Home.useCase)
+    .repeat(3){
+      exec(AddArticle.useCase)
+    }
+    .repeat(2){
+      exec(AddArticle.useCase)
+      .exec(OpenArticle.useCase)
+    }
   /**
    * These are the scenarios run in 'debug' mode.
    */
   val debugScenario = scenario("debug")
-    .exec(HelloWorld.useCase)
-    .exec(PostPeople.useCase)
-    .exec(GetPeople.useCase)
+    .feed(UsersFeeder.users)
+    .exec(Home.useCase)
+    .exec(AddArticle.useCase)
+    .exec(OpenArticle.useCase)
+
+
 
 }

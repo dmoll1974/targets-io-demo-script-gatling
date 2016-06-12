@@ -16,8 +16,8 @@
         
         <!-- dependency versioning -->
 
-        <gatling.version>2.1.7</gatling.version>
-        <gatling-maven-plugin.version>2.1.7</gatling-maven-plugin.version>
+        <gatling.version>2.2.1</gatling.version>
+        <gatling-maven-plugin.version>2.2.0</gatling-maven-plugin.version>
 
 
         <!-- lt-dash url  -->
@@ -39,7 +39,8 @@
         <useProxy>false</useProxy>
         
         <!-- By default, Jenkins job name and build numner are used as testrun ID  -->
-        <testRunId>${JOB_NAME}-${BUILD_NUMBER}</testRunId>
+        <!--<testRunId>${JOB_NAME}-${BUILD_NUMBER}</testRunId>-->
+        <testRunId>DEBUG</testRunId>
 
         
         <!-- Default sets build ID and activeProfileId to DEBUG so no events will be logged to the lt-dash server -->

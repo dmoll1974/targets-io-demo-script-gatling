@@ -4,7 +4,7 @@ import com.gatling.demo.gatling.configuration.Configuration
 import com.gatling.demo.gatling.helpers.HelperScenarios
 import com.gatling.demo.gatling.util.TargetsIoSimulation
 import io.gatling.core.Predef._
-import io.gatling.core.structure.{PopulatedScenarioBuilder, ScenarioBuilder}
+import io.gatling.core.structure.{PopulationBuilder, ScenarioBuilder}
 import scala.concurrent.duration._
 
 
@@ -33,7 +33,7 @@ class Demo extends TargetsIoSimulation {
     * This list is constructed by configuring the scenarios in the baseScenario and optionally prepending the
     * list with some auxiliary scenarios when they are needed.
     */
-  val runnableScenarios: List[PopulatedScenarioBuilder] = addKeepAliveScenario(configureBaseScenarios(List(baseScenario)))
+  val runnableScenarios: List[PopulationBuilder] = addKeepAliveScenario(configureBaseScenarios(List(baseScenario)))
 
 
   /**
@@ -41,7 +41,7 @@ class Demo extends TargetsIoSimulation {
     * @param scenarios the list of ready-made scenarios
     * @return the list with all the previously prepared scenarios, including the failover scenario if that profile is active.
     */
-  def addKeepAliveScenario(scenarios: List[PopulatedScenarioBuilder]): List[PopulatedScenarioBuilder] = {
+  def addKeepAliveScenario(scenarios: List[PopulationBuilder]): List[PopulationBuilder] = {
     if (!Configuration.isDebugActive)
       HelperScenarios.runningTestKeepAliveScenario.inject(atOnceUsers(1)) :: scenarios
     else
@@ -54,9 +54,9 @@ class Demo extends TargetsIoSimulation {
    * Recurses over the list of scenarios passed into the function and sets them up with the required users, ramp-up,
    * etc.
    * @param scenarios the list of Scenarios to initialize
-   * @return a list of PopulatedScenarioBuilders, ready to be simulated
+   * @return a list of PopulationBuilders, ready to be simulated
    */
-  def configureBaseScenarios(scenarios: List[ScenarioBuilder]): List[PopulatedScenarioBuilder] = scenarios match {
+  def configureBaseScenarios(scenarios: List[ScenarioBuilder]): List[PopulationBuilder] = scenarios match {
     case Nil => Nil
     case sc :: scs => (if (Configuration.isDebugActive) setupSingleDebugScenario(sc) else setupSingleScenario(sc)) :: configureBaseScenarios(scs)
   }
@@ -64,18 +64,18 @@ class Demo extends TargetsIoSimulation {
   /**
    * Injects the required debug settings into a single ScenarioBuilder.
    * @param scn the Scenario to initialize
-   * @return the initialized PopulatedScenarioBuilder
+   * @return the initialized PopulationBuilder
    */
-  def setupSingleDebugScenario(scn: ScenarioBuilder): PopulatedScenarioBuilder = scn.inject(
+  def setupSingleDebugScenario(scn: ScenarioBuilder): PopulationBuilder = scn.inject(
       atOnceUsers(1)
     ).disablePauses
 
   /**
    * Injects the required settings into a single ScenarioBuilder.
    * @param scn the Scenario to initialize
-   * @return the initialized PopulatedScenarioBuilder
+   * @return the initialized PopulationBuilder
    */
-  def setupSingleScenario(scn: ScenarioBuilder): PopulatedScenarioBuilder = scn.inject(
+  def setupSingleScenario(scn: ScenarioBuilder): PopulationBuilder = scn.inject(
       // Each default scenario is delayed by 10 seconds to allow the Mocca caches to be loaded
       rampUsersPerSec(Configuration.initialUsersPerSecond) to Configuration.targetUsersPerSecond during (Configuration.rampUpPeriodInSeconds),
       constantUsersPerSec(Configuration.targetUsersPerSecond) during(Configuration.constantUsagePeriodInSeconds)
