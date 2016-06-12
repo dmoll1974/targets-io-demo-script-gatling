@@ -5,6 +5,8 @@ import java.util.concurrent.TimeUnit
 import com.typesafe.config.ConfigFactory
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
+import io.gatling.commons.stats.KO
+
 
 /**
  * Contains the configuration needed to build the Scenarios to run. All configuration is read from
@@ -54,6 +56,11 @@ object Configuration {
     .acceptLanguageHeader("en-US,en;q=0.5")
     .acceptEncodingHeader("gzip, deflate")
     .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:16.0) Gecko/20100101 Firefox/16.0")
+    .extraInfoExtractor(ExtraInfo => {
+      if(ExtraInfo.status == KO)
+        println("httpCode: " + ExtraInfo.response.statusCode + ", body: "+ ExtraInfo.response.body)
+      Nil
+    })
 
   private val baseHttpDebugProtocol = http
     .baseURL(targetBaseUrl) // Here is the root for all relative URLs
