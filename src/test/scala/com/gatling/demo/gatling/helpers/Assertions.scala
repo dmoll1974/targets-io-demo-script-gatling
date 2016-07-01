@@ -11,7 +11,7 @@ import io.gatling.http.Predef._
 class Assertions extends Simulation{
 
 
-  var targetsIoUrl = "http://kl1267xi.is.klmcorp.net:10003"
+  var targetsIoUrl = "http://targetsio"
   var productName = System.getProperty("productName")
   var dashboardName = System.getProperty("dashboardName")
   var testRunId = System.getProperty("testRunId")
