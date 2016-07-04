@@ -9,7 +9,7 @@ import DefaultJsonProtocol._
 import scalaj.http._
 
 
-case class TestRun(productName: String, productRelease: String, dashboardName: String, testRunId: String, start: String , end: String, baseline: String, previousBuild: String, completed: Boolean, humanReadableDuration: String, meetsRequirement: Boolean, benchmarkResultFixedOK: Boolean, benchmarkResultPreviousOK: Boolean, buildResultsUrl: String, annotations: String, rampUpPeriod: Int, metrics: Int){}
+case class TestRun(productName: String, productRelease: String, dashboardName: String, testRunId: String, start: String , end: String, baseline: String, previousBuild: String, completed: Boolean, humanReadableDuration: String, meetsRequirement: String, benchmarkResultFixedOK: String, benchmarkResultPreviousOK: String, buildResultsUrl: String, annotations: String, rampUpPeriod: Int, metrics: JsObject){}
 
 object MyJsonProtocol extends DefaultJsonProtocol {
   implicit val testRunFormat = jsonFormat17(TestRun)
