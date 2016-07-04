@@ -1,4 +1,4 @@
-package com.klm.gatling.util
+package com.gatling.demo.gatling.util
 
 import io.gatling.core.Predef._
 

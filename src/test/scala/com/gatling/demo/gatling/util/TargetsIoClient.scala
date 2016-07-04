@@ -1,4 +1,5 @@
-package com.klm.gatling.util
+package com.gatling.demo.gatling.util
+
 
 import _root_.spray.json.DefaultJsonProtocol
 import com.google.gson.Gson
@@ -7,7 +8,13 @@ import spray.json._
 import DefaultJsonProtocol._
 import scalaj.http._
 
+case class TestRun(productName: String, productRelease: String, dashboardName: String, testRunId: String, start: Int, end: Int, baseline: String, previousBuild: String, completed: Boolean, humanReadableDuration: String, meetsRequirement: Boolean, benchmarkResultFixedOK: Boolean, benchmarkResultPreviousOK: Boolean, buildResultsUrl: String, annotations: String, rampUpPeriod: Int, metrics: Int){}
 
+object MyJsonProtocol extends DefaultJsonProtocol {
+  implicit val testRunFormat = jsonFormat17(TestRun)
+}
+
+import MyJsonProtocol._
 
 object TargetsIoClient {
 
@@ -74,7 +81,7 @@ object TargetsIoClient {
         val jsonAST = response.asString.body.parseJson
         val testRun = jsonAST.convertTo[TestRun]
 
-        if (testRun.meetsRequirement == true || testRun.meetsRequirement == null) {
+        if (testRun.meetsRequirement equals  true || testRun.meetsRequirement equals null) {
           assertionsOKCount = assertionsOKCount + 1
         } else {
 
@@ -84,7 +91,7 @@ object TargetsIoClient {
 
         }
 
-        if (testRun.benchmarkResultPreviousOK == true || testRun.benchmarkResultPreviousOK == null) {
+        if (testRun.benchmarkResultPreviousOK equals true || testRun.benchmarkResultPreviousOK equals null) {
 
           assertionsOKCount = assertionsOKCount + 1
 
@@ -95,7 +102,7 @@ object TargetsIoClient {
           println("******************************************************************************************************")
         }
 
-        if (testRun.benchmarkResultFixedOK == true || testRun.benchmarkResultFixedOK == null) {
+        if (testRun.benchmarkResultFixedOK equals true || testRun.benchmarkResultFixedOK equals null) {
 
           assertionsOKCount = assertionsOKCount + 1
 
@@ -129,6 +136,5 @@ object TargetsIoClient {
 }
   class targetsIoRunningTest( var productName: String, var dashboardName: String, var testRunId: String, var buildResultsUrl: String, var productRelease: String )
 
-  case class TestRun(productName: String, productRelease: String, dashboardName: String, testRunId: String, start: Int, end: Int, baseline: String, previousBuild: String, completed: Boolean, humanReadableDuration: String, meetsRequirement: Boolean, benchmarkResultFixedOK: Boolean, benchmarkResultPreviousOK: Boolean, buildResultsUrl: String, annotations: String, rampUpPeriod: Int, metrics: List)
 
 
