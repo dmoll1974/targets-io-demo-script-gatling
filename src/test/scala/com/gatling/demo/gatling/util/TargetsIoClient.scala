@@ -42,6 +42,8 @@ object TargetsIoClient {
           .postData(runningTestAsJson)
           .header("Content-Type", "application/json")
 
+        println("Response status code: " + response.asString.code)
+
         if (response.asString.code != 200) {
 
           println("Something went wrong in the call to targets-io, http status code: " + response.asString.code + ", body: " + response.asString.body)
@@ -70,7 +72,7 @@ object TargetsIoClient {
 
   def assertBenchmarkResults(host: String, testRunId: String, dashboardName: String, productName: String): Unit = {
 
-    var succces = false
+    var succcess = false
     var assertionsOKCount = 0
     val assertTestRunUrl = host + "/testrun/" + productName + "/" + dashboardName + "/" + testRunId + "/"
 
