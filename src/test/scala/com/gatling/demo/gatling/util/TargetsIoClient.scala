@@ -8,15 +8,16 @@ import spray.json._
 import DefaultJsonProtocol._
 import scalaj.http._
 
-//case class TestRun(productName: String, productRelease: String, dashboardName: String, testRunId: String, start: , end: Int, baseline: String, previousBuild: String, completed: Boolean, humanReadableDuration: String, meetsRequirement: Boolean, benchmarkResultFixedOK: Boolean, benchmarkResultPreviousOK: Boolean, buildResultsUrl: String, annotations: String, rampUpPeriod: Int, metrics: Int){}
-//
-//object MyJsonProtocol extends DefaultJsonProtocol {
-//  implicit val testRunFormat = jsonFormat17(TestRun)
-//}
-//
-//import MyJsonProtocol._
 
-object TargetsIoClient extends DefaultJsonProtocol  {
+case class TestRun(productName: String, productRelease: String, dashboardName: String, testRunId: String, start: String , end: String, baseline: String, previousBuild: String, completed: Boolean, humanReadableDuration: String, meetsRequirement: Boolean, benchmarkResultFixedOK: Boolean, benchmarkResultPreviousOK: Boolean, buildResultsUrl: String, annotations: String, rampUpPeriod: Int, metrics: Int){}
+
+object MyJsonProtocol extends DefaultJsonProtocol {
+  implicit val testRunFormat = jsonFormat17(TestRun)
+}
+
+import MyJsonProtocol._
+
+object TargetsIoClient {
 
 
 
