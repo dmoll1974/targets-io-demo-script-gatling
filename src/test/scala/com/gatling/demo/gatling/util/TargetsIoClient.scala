@@ -8,18 +8,17 @@ import spray.json._
 import DefaultJsonProtocol._
 import scalaj.http._
 
-case class TestRun(productName: String, productRelease: String, dashboardName: String, testRunId: String, start: Int, end: Int, baseline: String, previousBuild: String, completed: Boolean, humanReadableDuration: String, meetsRequirement: Boolean, benchmarkResultFixedOK: Boolean, benchmarkResultPreviousOK: Boolean, buildResultsUrl: String, annotations: String, rampUpPeriod: Int, metrics: Int){}
+//case class TestRun(productName: String, productRelease: String, dashboardName: String, testRunId: String, start: , end: Int, baseline: String, previousBuild: String, completed: Boolean, humanReadableDuration: String, meetsRequirement: Boolean, benchmarkResultFixedOK: Boolean, benchmarkResultPreviousOK: Boolean, buildResultsUrl: String, annotations: String, rampUpPeriod: Int, metrics: Int){}
+//
+//object MyJsonProtocol extends DefaultJsonProtocol {
+//  implicit val testRunFormat = jsonFormat17(TestRun)
+//}
+//
+//import MyJsonProtocol._
 
-object MyJsonProtocol extends DefaultJsonProtocol {
-  implicit val testRunFormat = jsonFormat17(TestRun)
-}
+object TargetsIoClient extends DefaultJsonProtocol  {
 
-import MyJsonProtocol._
 
-object TargetsIoClient {
-
-  var tries = 0
-  val maxTries = 6
 
   def sendEvent(host: String, command: String, testRunId: String, buildResultsUrl: String, dashboardName: String, productName: String, productRelease: String) {
 
@@ -32,6 +31,8 @@ object TargetsIoClient {
     // convert runningTest to a JSON string
     val runningTestAsJson = new Gson().toJson(runningTest)
 
+    var tries = 0
+    val maxTries = 6
     var success = false
 
 
@@ -74,6 +75,8 @@ object TargetsIoClient {
 
   def assertBenchmarkResults(host: String, testRunId: String, dashboardName: String, productName: String): Unit = {
 
+    var tries = 0
+    val maxTries = 6
     var success = false
     var assertionsOKCount = 0
     val assertTestRunUrl = host + "/testrun/" + productName + "/" + dashboardName + "/" + testRunId + "/"
