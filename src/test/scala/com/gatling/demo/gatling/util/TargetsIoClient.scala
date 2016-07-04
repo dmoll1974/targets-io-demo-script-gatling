@@ -19,7 +19,6 @@ import MyJsonProtocol._
 object TargetsIoClient {
 
   var tries = 0
-  var success = false
   val maxTries = 6
 
   def sendEvent(host: String, command: String, testRunId: String, buildResultsUrl: String, dashboardName: String, productName: String, productRelease: String) {
@@ -32,6 +31,8 @@ object TargetsIoClient {
 
     // convert runningTest to a JSON string
     val runningTestAsJson = new Gson().toJson(runningTest)
+
+    var success = false
 
 
 
@@ -72,7 +73,7 @@ object TargetsIoClient {
 
   def assertBenchmarkResults(host: String, testRunId: String, dashboardName: String, productName: String): Unit = {
 
-    var succcess = false
+    var success = false
     var assertionsOKCount = 0
     val assertTestRunUrl = host + "/testrun/" + productName + "/" + dashboardName + "/" + testRunId + "/"
 
