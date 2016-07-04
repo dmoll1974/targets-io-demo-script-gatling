@@ -1,11 +1,19 @@
-package com.gatling.demo.gatling.util
+package com.klm.gatling.util
 
+import _root_.spray.json.DefaultJsonProtocol
 import com.google.gson.Gson
 
+import spray.json._
+import DefaultJsonProtocol._
 import scalaj.http._
 
 
+
 object TargetsIoClient {
+
+  var tries = 0
+  var success = false
+  val maxTries = 6
 
   def sendEvent(host: String, command: String, testRunId: String, buildResultsUrl: String, dashboardName: String, productName: String, productRelease: String ) {
 
@@ -18,9 +26,6 @@ object TargetsIoClient {
     // convert runningTest to a JSON string
     val runningTestAsJson = new Gson().toJson(runningTest)
 
-    var tries = 0
-    var success = false
-    val maxTries = 6
 
 
     while(tries < maxTries && success == false) {
@@ -56,8 +61,75 @@ object TargetsIoClient {
     }
   }
 
-}
+  def assertBenchmarkResults (host: String, testRunId: String, dashboardName: String, productName: String): Unit = {
 
-class targetsIoRunningTest( var productName: String, var dashboardName: String, var testRunId: String, var buildResultsUrl: String, var productRelease: String ) {
-}
+
+    var assertionsOKCount = 0
+    val assertTestRunUrl = host + "/testrun/" + productName + "/" + dashboardName + "/" + testRunId + "/"
+
+    while (tries < maxTries && success == false) {
+      try {
+
+        val response = Http(assertTestRunUrl).header("Content-Type", "application/json")
+        val jsonAST = response.asString.body.parseJson
+        val testRun = jsonAST.convertTo[TestRun]
+
+        if (testRun.meetsRequirement == true || testRun.meetsRequirement == null) {
+          assertionsOKCount = assertionsOKCount + 1
+        } else {
+
+          println("******************************************************************************************************")
+          println("* Requirements results failed: " + host + "/#!/requirements/" + productName + "/" + dashboardName + "/" + testRunId + "/failed/")
+          println("******************************************************************************************************")
+
+        }
+
+        if (testRun.benchmarkResultPreviousOK == true || testRun.benchmarkResultPreviousOK == null) {
+
+          assertionsOKCount = assertionsOKCount + 1
+
+        } else {
+
+          println("******************************************************************************************************")
+          println("* Benchmark to previous build results failed: " + host + "/#!/benchmark-previous-build/" + productName + "/" + dashboardName + "/" + testRunId + "/failed/")
+          println("******************************************************************************************************")
+        }
+
+        if (testRun.benchmarkResultFixedOK == true || testRun.benchmarkResultFixedOK == null) {
+
+          assertionsOKCount = assertionsOKCount + 1
+
+        } else {
+
+          println("******************************************************************************************************")
+          println("* Benchmark to fixed baseline results failed: " + host + "/#!/benchmark-fixed-baseline/" + productName + "/" + dashboardName + "/" + testRunId + "/failed/")
+          println("******************************************************************************************************")
+        }
+
+
+        if(assertionsOKCount < 3){
+
+          println("******************************************************************************************************")
+          println("* Job failed due to one or more of the benchmarks failing, please check the logs above for details    *")
+          println("******************************************************************************************************")
+
+          System.exit(-1)
+        }
+
+
+      } catch {
+
+        case e: Exception =>
+          println("Exception occured: " + e);
+      }
+
+    }
+
+  }
+
+  class targetsIoRunningTest( var productName: String, var dashboardName: String, var testRunId: String, var buildResultsUrl: String, var productRelease: String ) {
+
+    case class TestRun(productName: String, productRelease: String, dashboardName: String, testRunId: String, start: Int, end: Int, baseline: String, previousBuild: String, completed: Boolean, humanReadableDuration: String, meetsRequirement: Boolean, benchmarkResultFixedOK: Boolean, benchmarkResultPreviousOK: Boolean, buildResultsUrl: String, annotations: String, rampUpPeriod: Int, metrics: List)
+
+  }
 
