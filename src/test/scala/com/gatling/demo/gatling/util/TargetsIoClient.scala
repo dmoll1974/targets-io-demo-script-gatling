@@ -70,7 +70,7 @@ object TargetsIoClient {
 
   def assertBenchmarkResults(host: String, testRunId: String, dashboardName: String, productName: String): Unit = {
 
-
+    var succces = false
     var assertionsOKCount = 0
     val assertTestRunUrl = host + "/testrun/" + productName + "/" + dashboardName + "/" + testRunId + "/"
 
