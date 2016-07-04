@@ -15,9 +15,9 @@ object TargetsIoClient {
   var success = false
   val maxTries = 6
 
-  def sendEvent(host: String, command: String, testRunId: String, buildResultsUrl: String, dashboardName: String, productName: String, productRelease: String ) {
+  def sendEvent(host: String, command: String, testRunId: String, buildResultsUrl: String, dashboardName: String, productName: String, productRelease: String) {
 
-    println( "sending "+ command + " test run call to rest service at host " + host + " with data: testRunId: "+ testRunId + ", productName: " + productName + ", productRelease: " + productRelease + ", dashboardName: "  + dashboardName +  ", buildResultsUrl: " + buildResultsUrl )
+    println("sending " + command + " test run call to rest service at host " + host + " with data: testRunId: " + testRunId + ", productName: " + productName + ", productRelease: " + productRelease + ", dashboardName: " + dashboardName + ", buildResultsUrl: " + buildResultsUrl)
 
     val runningTestUrl = host + "/running-test/" + command
 
@@ -28,7 +28,7 @@ object TargetsIoClient {
 
 
 
-    while(tries < maxTries && success == false) {
+    while (tries < maxTries && success == false) {
       try {
 
         val response = Http(runningTestUrl)
@@ -47,7 +47,7 @@ object TargetsIoClient {
             println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
 
           }
-        }else{
+        } else {
 
           println("Call to targets-io succeeded, " + command + "ing the test!")
           success = true
@@ -61,7 +61,7 @@ object TargetsIoClient {
     }
   }
 
-  def assertBenchmarkResults (host: String, testRunId: String, dashboardName: String, productName: String): Unit = {
+  def assertBenchmarkResults(host: String, testRunId: String, dashboardName: String, productName: String): Unit = {
 
 
     var assertionsOKCount = 0
@@ -107,7 +107,7 @@ object TargetsIoClient {
         }
 
 
-        if(assertionsOKCount < 3){
+        if (assertionsOKCount < 3) {
 
           println("******************************************************************************************************")
           println("* Job failed due to one or more of the benchmarks failing, please check the logs above for details    *")
@@ -126,10 +126,9 @@ object TargetsIoClient {
     }
 
   }
+}
+  class targetsIoRunningTest( var productName: String, var dashboardName: String, var testRunId: String, var buildResultsUrl: String, var productRelease: String )
 
-  class targetsIoRunningTest( var productName: String, var dashboardName: String, var testRunId: String, var buildResultsUrl: String, var productRelease: String ) {
+  case class TestRun(productName: String, productRelease: String, dashboardName: String, testRunId: String, start: Int, end: Int, baseline: String, previousBuild: String, completed: Boolean, humanReadableDuration: String, meetsRequirement: Boolean, benchmarkResultFixedOK: Boolean, benchmarkResultPreviousOK: Boolean, buildResultsUrl: String, annotations: String, rampUpPeriod: Int, metrics: List)
 
-    case class TestRun(productName: String, productRelease: String, dashboardName: String, testRunId: String, start: Int, end: Int, baseline: String, previousBuild: String, completed: Boolean, humanReadableDuration: String, meetsRequirement: Boolean, benchmarkResultFixedOK: Boolean, benchmarkResultPreviousOK: Boolean, buildResultsUrl: String, annotations: String, rampUpPeriod: Int, metrics: List)
-
-  }
 
