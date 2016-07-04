@@ -55,6 +55,7 @@ object TargetsIoClient {
             tries = tries + 1
           } else {
             println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
+            success = true
 
           }
         } else {
