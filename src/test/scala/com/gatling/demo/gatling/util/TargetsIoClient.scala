@@ -77,52 +77,63 @@ object TargetsIoClient {
     while (tries < maxTries && success == false) {
       try {
 
+        println("Sending assertions call to " + assertTestRunUrl )
+
         val response = Http(assertTestRunUrl).header("Content-Type", "application/json")
         val jsonAST = response.asString.body.parseJson
         val testRun = jsonAST.convertTo[TestRun]
 
-        if (testRun.meetsRequirement equals  true || testRun.meetsRequirement equals null) {
-          assertionsOKCount = assertionsOKCount + 1
-        } else {
+        if (response.asString.code == 200) {
+          success = true
+          println("Assertion call succeeded, checking benchmarks now!" )
 
-          println("******************************************************************************************************")
-          println("* Requirements results failed: " + host + "/#!/requirements/" + productName + "/" + dashboardName + "/" + testRunId + "/failed/")
-          println("******************************************************************************************************")
 
+          if (testRun.meetsRequirement equals true || testRun.meetsRequirement equals null) {
+            assertionsOKCount = assertionsOKCount + 1
+          } else {
+
+            println("******************************************************************************************************")
+            println("* Requirements results failed: " + host + "/#!/requirements/" + productName + "/" + dashboardName + "/" + testRunId + "/failed/")
+            println("******************************************************************************************************")
+
+          }
+
+          if (testRun.benchmarkResultPreviousOK equals true || testRun.benchmarkResultPreviousOK equals null) {
+
+            assertionsOKCount = assertionsOKCount + 1
+
+          } else {
+
+            println("******************************************************************************************************")
+            println("* Benchmark to previous build results failed: " + host + "/#!/benchmark-previous-build/" + productName + "/" + dashboardName + "/" + testRunId + "/failed/")
+            println("******************************************************************************************************")
+          }
+
+          if (testRun.benchmarkResultFixedOK equals true || testRun.benchmarkResultFixedOK equals null) {
+
+            assertionsOKCount = assertionsOKCount + 1
+
+          } else {
+
+            println("******************************************************************************************************")
+            println("* Benchmark to fixed baseline results failed: " + host + "/#!/benchmark-fixed-baseline/" + productName + "/" + dashboardName + "/" + testRunId + "/failed/")
+            println("******************************************************************************************************")
+          }
+
+
+          if (assertionsOKCount < 3) {
+
+            println("******************************************************************************************************")
+            println("* Job failed due to one or more of the benchmarks failing, please check the logs above for details    *")
+            println("******************************************************************************************************")
+
+            System.exit(-1)
+          }else{
+
+            println("All benchmarks passed!" )
+
+          }
         }
-
-        if (testRun.benchmarkResultPreviousOK equals true || testRun.benchmarkResultPreviousOK equals null) {
-
-          assertionsOKCount = assertionsOKCount + 1
-
-        } else {
-
-          println("******************************************************************************************************")
-          println("* Benchmark to previous build results failed: " + host + "/#!/benchmark-previous-build/" + productName + "/" + dashboardName + "/" + testRunId + "/failed/")
-          println("******************************************************************************************************")
-        }
-
-        if (testRun.benchmarkResultFixedOK equals true || testRun.benchmarkResultFixedOK equals null) {
-
-          assertionsOKCount = assertionsOKCount + 1
-
-        } else {
-
-          println("******************************************************************************************************")
-          println("* Benchmark to fixed baseline results failed: " + host + "/#!/benchmark-fixed-baseline/" + productName + "/" + dashboardName + "/" + testRunId + "/failed/")
-          println("******************************************************************************************************")
-        }
-
-
-        if (assertionsOKCount < 3) {
-
-          println("******************************************************************************************************")
-          println("* Job failed due to one or more of the benchmarks failing, please check the logs above for details    *")
-          println("******************************************************************************************************")
-
-          System.exit(-1)
-        }
-
 
       } catch {
 
