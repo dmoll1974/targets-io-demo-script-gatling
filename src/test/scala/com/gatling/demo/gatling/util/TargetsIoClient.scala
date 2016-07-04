@@ -96,7 +96,7 @@ object TargetsIoClient {
           println("Assertion call succeeded, checking benchmarks now!" )
 
 
-          if (testRun.meetsRequirement equals true || testRun.meetsRequirement equals null) {
+          if (testRun.meetsRequirement == "true" || testRun.meetsRequirement == "null") {
             assertionsOKCount = assertionsOKCount + 1
           } else {
 
@@ -106,7 +106,7 @@ object TargetsIoClient {
 
           }
 
-          if (testRun.benchmarkResultPreviousOK equals true || testRun.benchmarkResultPreviousOK equals null) {
+          if (testRun.benchmarkResultPreviousOK == "true" || testRun.benchmarkResultPreviousOK == "null") {
 
             assertionsOKCount = assertionsOKCount + 1
 
@@ -117,7 +117,7 @@ object TargetsIoClient {
             println("******************************************************************************************************")
           }
 
-          if (testRun.benchmarkResultFixedOK equals true || testRun.benchmarkResultFixedOK equals null) {
+          if (testRun.benchmarkResultFixedOK == "true" || testRun.benchmarkResultFixedOK == "null") {
 
             assertionsOKCount = assertionsOKCount + 1
 
