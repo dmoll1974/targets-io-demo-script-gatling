@@ -41,14 +41,11 @@ object TargetsIoClient {
     while (tries < maxTries && success != 200) {
       try {
 
-        println("sending call, tries: " + tries + ", success: " + success)
+        println("sending call, tries: " + tries + ", success: " + success + ", url:" + runningTestUrl)
 
         var response = Http(runningTestUrl)
           .postData(runningTestAsJson)
           .header("Content-Type", "application/json")
-
-        println("Response status code: " + response.asString.code)
-
 
         success = response.asString.code
 
