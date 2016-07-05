@@ -34,11 +34,11 @@ object TargetsIoClient {
 
     var tries = 0
     val maxTries = 6
-    var success = false
+    var success = 0
 
 
 
-    while (tries < maxTries && success equals false) {
+    while (tries < maxTries && success != 200) {
       try {
 
         println("sending call, tries: " + tries + ", success: " + success)
@@ -52,7 +52,7 @@ object TargetsIoClient {
         if (response.asString.code == 200) {
 
           println("Call to targets-io succeeded, " + command + "ing the test!")
-          success = true
+          success = response.asString.code
 
         } else {
 
