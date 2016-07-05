@@ -11,11 +11,11 @@ class TargetsIoSimulation extends Simulation {
   var targetsIoUrl : String = _
   var buildResultsUrl : String = _
   var productRelease : String = _
-  var assertResults : Boolean = _
+  var assertResults : String = _
   if (System.getProperty("buildResultsUrl") != null) buildResultsUrl = System.getProperty("buildResultsUrl") else buildResultsUrl = "MANUAL_TEST"
   if (System.getProperty("targetsIoUrl") != null) targetsIoUrl = System.getProperty("targetsIoUrl") else targetsIoUrl = "http://dashboard.com"
   if (System.getProperty("productRelease") != null) productRelease = System.getProperty("productRelease") else productRelease = ""
-  if (System.getProperty("assertResults") != null) assertResults = System.getProperty("assertResults") else assertResults = false
+  if (System.getProperty("assertResults") != null) assertResults = System.getProperty("assertResults") else assertResults = "false"
 
   val dashboardName = System.getProperty("dashboardName")
   val productName = System.getProperty("productName")
@@ -39,7 +39,7 @@ class TargetsIoSimulation extends Simulation {
 
     if (testRunId != "DEBUG") {
       TargetsIoClient.sendTestRunEvent(targetsIoUrl, "end", testRunId, buildResultsUrl, dashboardName, productName, productRelease)
-      if (assertResults equals true){
+      if (assertResults == "true"){
         Thread.sleep(15000) /* allow some time to run the benchmarks */
         TargetsIoClient.assertBenchmarkResults(targetsIoUrl, testRunId, dashboardName, productName)
       }
