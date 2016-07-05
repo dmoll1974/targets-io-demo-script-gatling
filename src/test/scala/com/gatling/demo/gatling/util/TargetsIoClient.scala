@@ -43,7 +43,7 @@ object TargetsIoClient {
 
         println("sending call, tries: " + tries + ", success: " + success)
 
-        val response = Http(runningTestUrl)
+        var response = Http(runningTestUrl)
           .postData(runningTestAsJson)
           .header("Content-Type", "application/json")
 
@@ -93,9 +93,9 @@ object TargetsIoClient {
 
         println("Sending assertions call to " + assertTestRunUrl )
 
-        val response = Http(assertTestRunUrl).header("Content-Type", "application/json")
-        val jsonAST = response.asString.body.parseJson
-        val benchmarks = jsonAST.convertTo[Benchmarks]
+        var response = Http(assertTestRunUrl).header("Content-Type", "application/json")
+        var jsonAST = response.asString.body.parseJson
+        var benchmarks = jsonAST.convertTo[Benchmarks]
 
         if (response.asString.code == 200) {
           success = true
