@@ -34,11 +34,11 @@ object TargetsIoClient {
 
     var tries = 0
     val maxTries = 6
-    var success = 0
+    var success = false
 
 
 
-    while (tries < maxTries && success != 200) {
+    while (tries < maxTries && success != true) {
       try {
 
         println("sending call, tries: " + tries + ", success: " + success + ", url:" + runningTestUrl)
@@ -47,14 +47,10 @@ object TargetsIoClient {
           .postData(runningTestAsJson)
           .header("Content-Type", "application/json")
 
-//        success = response.asString.code
-//
-//        println("success: " + success)
-
         if (response.asString.code == 200) {
 
           println("Call to targets-io succeeded, " + command + "ing the test!")
-          success = 200
+          success = true
 
         } else {
 
