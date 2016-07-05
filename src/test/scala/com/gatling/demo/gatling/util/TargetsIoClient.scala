@@ -5,7 +5,7 @@ import _root_.spray.json.DefaultJsonProtocol
 import com.google.gson.Gson
 
 import spray.json._
-import util.control.Breaks._
+import DefaultJsonProtocol._
 import scalaj.http._
 
 
@@ -38,7 +38,7 @@ object TargetsIoClient {
 
 
 
-    for (i <- 1 to 5) {
+    while (tries < maxTries && success != 200) {
       try {
 
         println("sending call, tries: " + tries + ", success: " + success)
@@ -49,23 +49,29 @@ object TargetsIoClient {
 
         println("Response status code: " + response.asString.code)
 
+
+        success = response.asString.code
+
+        println("success: " + success)
+
         if (response.asString.code == 200) {
 
           println("Call to targets-io succeeded, " + command + "ing the test!")
-          break
 
         } else {
 
           println("Something went wrong in the call to targets-io, http status code: " + response.asString.code + ", body: " + response.asString.body)
 
-          if (i < 5) {
+          if (tries < 5) {
             println("Retrying after 3 seconds...")
             Thread.sleep(3000)
             tries = tries + 1
           } else {
             println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
-            break
+            success = 200
           }
+
+
 
         }
 
