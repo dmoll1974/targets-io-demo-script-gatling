@@ -5,7 +5,7 @@ import _root_.spray.json.DefaultJsonProtocol
 import com.google.gson.Gson
 
 import spray.json._
-import DefaultJsonProtocol._
+import util.control.Breaks._
 import scalaj.http._
 
 
@@ -21,7 +21,7 @@ object TargetsIoClient {
 
 
 
-  def sendStartEvent(host: String, command: String, testRunId: String, buildResultsUrl: String, dashboardName: String, productName: String, productRelease: String) {
+  def sendTestRunEvent(host: String, command: String, testRunId: String, buildResultsUrl: String, dashboardName: String, productName: String, productRelease: String) {
 
     println("sending " + command + " test run call to rest service at host " + host + " with data: testRunId: " + testRunId + ", productName: " + productName + ", productRelease: " + productRelease + ", dashboardName: " + dashboardName + ", buildResultsUrl: " + buildResultsUrl)
 
@@ -38,7 +38,7 @@ object TargetsIoClient {
 
 
 
-    while (tries < maxTries && success != 200) {
+    for (i <- 1 to 5) {
       try {
 
         println("sending call, tries: " + tries + ", success: " + success)
@@ -48,89 +48,24 @@ object TargetsIoClient {
           .header("Content-Type", "application/json")
 
         println("Response status code: " + response.asString.code)
-        println("Response body: " + response.asString.body)
-
-
-        success = response.asString.code
 
         if (response.asString.code == 200) {
 
           println("Call to targets-io succeeded, " + command + "ing the test!")
+          break
 
         } else {
 
           println("Something went wrong in the call to targets-io, http status code: " + response.asString.code + ", body: " + response.asString.body)
 
-          if (tries < 5) {
+          if (i < 5) {
             println("Retrying after 3 seconds...")
             Thread.sleep(3000)
             tries = tries + 1
           } else {
             println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
-            success = 200
+            break
           }
-
-
-
-        }
-
-
-      } catch {
-        case e: Exception =>
-          println("Exception occured: " + e);
-      }
-    }
-  }
-def sendEndEvent(host: String, command: String, testRunId: String, buildResultsUrl: String, dashboardName: String, productName: String, productRelease: String) {
-
-    println("sending " + command + " test run call to rest service at host " + host + " with data: testRunId: " + testRunId + ", productName: " + productName + ", productRelease: " + productRelease + ", dashboardName: " + dashboardName + ", buildResultsUrl: " + buildResultsUrl)
-
-    val runningTestUrl = host + "/running-test/" + command
-
-    val runningTest = new targetsIoRunningTest(productName, dashboardName, testRunId, buildResultsUrl, productRelease)
-
-    // convert runningTest to a JSON string
-    val runningTestAsJson = new Gson().toJson(runningTest)
-
-    var tries = 0
-    val maxTries = 6
-    var success = 0
-
-
-
-    while (tries < maxTries && success != 200) {
-      try {
-
-        println("sending call, tries: " + tries + ", success: " + success)
-
-        var response = Http(runningTestUrl)
-          .postData(runningTestAsJson)
-          .header("Content-Type", "application/json")
-
-        println("Response status code: " + response.asString.code)
-        println("Response body: " + response.asString.body)
-
-
-        success = response.asString.code
-
-        if (response.asString.code == 200) {
-
-          println("Call to targets-io succeeded, " + command + "ing the test!")
-
-        } else {
-
-          println("Something went wrong in the call to targets-io, http status code: " + response.asString.code + ", body: " + response.asString.body)
-
-          if (tries < 5) {
-            println("Retrying after 3 seconds...")
-            Thread.sleep(3000)
-            tries = tries + 1
-          } else {
-            println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
-            success = 200
-          }
-
-
 
         }
 
