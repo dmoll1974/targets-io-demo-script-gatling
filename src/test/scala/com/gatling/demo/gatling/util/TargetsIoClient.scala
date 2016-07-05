@@ -41,13 +41,15 @@ object TargetsIoClient {
     while (tries < maxTries && success equals false) {
       try {
 
+        println("sending call, tries: " + tries + ", success: " + success)
+
         val response = Http(runningTestUrl)
           .postData(runningTestAsJson)
           .header("Content-Type", "application/json")
 
         println("Response status code: " + response.asString.code)
 
-        if (response.asString.code != "200") {
+        if (response.asString.code != 200) {
 
           println("Something went wrong in the call to targets-io, http status code: " + response.asString.code + ", body: " + response.asString.body)
 
@@ -91,9 +93,9 @@ object TargetsIoClient {
         val jsonAST = response.asString.body.parseJson
         val benchmarks = jsonAST.convertTo[Benchmarks]
 
-        if (response.asString.code == "200") {
+        if (response.asString.code == 200) {
           success = true
-          println("Assertion call succeeded, checking benchmarks now!" )
+          println("Assertion call succeeded, checking benchmarks now..." )
 
 
           if (benchmarks.meetsRequirement equals true) {
