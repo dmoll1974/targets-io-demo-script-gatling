@@ -9,10 +9,10 @@ import DefaultJsonProtocol._
 import scalaj.http._
 
 
-case class TestRun(productName: String, productRelease: String, dashboardName: String, testRunId: String, start: String , end: String, baseline: String, previousBuild: String, completed: Boolean, humanReadableDuration: String, meetsRequirement: String, benchmarkResultFixedOK: String, benchmarkResultPreviousOK: String, buildResultsUrl: String, annotations: String, rampUpPeriod: Int, metrics: JsObject){}
+case class Benchmarks(meetsRequirement: Boolean, benchmarkResultFixedOK: Boolean, benchmarkResultPreviousOK: Boolean){}
 
 object MyJsonProtocol extends DefaultJsonProtocol {
-  implicit val testRunFormat = jsonFormat17(TestRun)
+  implicit val benchmarksFormat = jsonFormat3(Benchmarks)
 }
 
 import MyJsonProtocol._
@@ -38,7 +38,7 @@ object TargetsIoClient {
 
 
 
-    while (tries < maxTries && success == false) {
+    while (tries < maxTries && success equals false) {
       try {
 
         val response = Http(runningTestUrl)
@@ -80,23 +80,23 @@ object TargetsIoClient {
     val maxTries = 6
     var success = false
     var assertionsOKCount = 0
-    val assertTestRunUrl = host + "/testrun/" + productName + "/" + dashboardName + "/" + testRunId + "/"
+    val assertTestRunUrl = host + "/benchmarks/" + productName + "/" + dashboardName + "/" + testRunId + "/"
 
-    while (tries < maxTries && success == false) {
+    while (tries < maxTries && success equals false) {
       try {
 
         println("Sending assertions call to " + assertTestRunUrl )
 
         val response = Http(assertTestRunUrl).header("Content-Type", "application/json")
         val jsonAST = response.asString.body.parseJson
-        val testRun = jsonAST.convertTo[TestRun]
+        val benchmarks = jsonAST.convertTo[Benchmarks]
 
         if (response.asString.code == 200) {
           success = true
           println("Assertion call succeeded, checking benchmarks now!" )
 
 
-          if (testRun.meetsRequirement == "true" || testRun.meetsRequirement == "null") {
+          if (benchmarks.meetsRequirement equals true) {
             assertionsOKCount = assertionsOKCount + 1
           } else {
 
@@ -106,7 +106,7 @@ object TargetsIoClient {
 
           }
 
-          if (testRun.benchmarkResultPreviousOK == "true" || testRun.benchmarkResultPreviousOK == "null") {
+          if (benchmarks.benchmarkResultPreviousOK equals true) {
 
             assertionsOKCount = assertionsOKCount + 1
 
@@ -117,7 +117,7 @@ object TargetsIoClient {
             println("******************************************************************************************************")
           }
 
-          if (testRun.benchmarkResultFixedOK == "true" || testRun.benchmarkResultFixedOK == "null") {
+          if (benchmarks.benchmarkResultFixedOK equals true) {
 
             assertionsOKCount = assertionsOKCount + 1
 
@@ -139,6 +139,17 @@ object TargetsIoClient {
           }else{
 
             println("All benchmarks passed!" )
+
+          }
+        }else{
+
+          if (tries < 5) {
+            println("Retrying after 3 seconds...")
+            Thread.sleep(3000)
+            tries = tries + 1
+          } else {
+            println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
+            success = true
 
           }
         }
