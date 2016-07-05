@@ -49,7 +49,12 @@ object TargetsIoClient {
 
         println("Response status code: " + response.asString.code)
 
-        if (response.asString.code != 200) {
+        if (response.asString.code == 200) {
+
+          println("Call to targets-io succeeded, " + command + "ing the test!")
+          success = true
+
+        } else {
 
           println("Something went wrong in the call to targets-io, http status code: " + response.asString.code + ", body: " + response.asString.body)
 
@@ -62,10 +67,9 @@ object TargetsIoClient {
             success = true
 
           }
-        } else {
 
-          println("Call to targets-io succeeded, " + command + "ing the test!")
-          success = true
+
+
         }
 
 
