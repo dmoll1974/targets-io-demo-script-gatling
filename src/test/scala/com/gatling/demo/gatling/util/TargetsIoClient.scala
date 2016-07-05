@@ -49,10 +49,11 @@ object TargetsIoClient {
 
         println("Response status code: " + response.asString.code)
 
+        success = response.asString.code
+
         if (response.asString.code == 200) {
 
           println("Call to targets-io succeeded, " + command + "ing the test!")
-          success = response.asString.code
 
         } else {
 
@@ -64,7 +65,7 @@ object TargetsIoClient {
             tries = tries + 1
           } else {
             println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
-
+            success = 200
           }
 
 
