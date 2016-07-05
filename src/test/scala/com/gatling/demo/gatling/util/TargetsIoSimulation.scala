@@ -25,7 +25,7 @@ class TargetsIoSimulation extends Simulation {
 
   def beforeSimulation() {
     if (testRunId != "DEBUG")
-      TargetsIoClient.sendEvent(targetsIoUrl, "start", testRunId,  buildResultsUrl, dashboardName, productName, productRelease)
+      TargetsIoClient.sendStartEvent(targetsIoUrl, "start", testRunId,  buildResultsUrl, dashboardName, productName, productRelease)
 
   }
 
@@ -36,7 +36,7 @@ class TargetsIoSimulation extends Simulation {
   def afterSimulation() {
 
     if (testRunId != "DEBUG"){
-      TargetsIoClient.sendEvent(targetsIoUrl, "end", testRunId, buildResultsUrl, dashboardName, productName, productRelease)
+      TargetsIoClient.sendEndEvent(targetsIoUrl, "end", testRunId, buildResultsUrl, dashboardName, productName, productRelease)
       Thread.sleep(15000) /* allow some time to run the benchmarks */
       TargetsIoClient.assertBenchmarkResults(targetsIoUrl, testRunId, dashboardName, productName)
     }

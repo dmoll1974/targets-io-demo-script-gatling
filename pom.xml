@@ -264,7 +264,7 @@
             <properties>
                 <activeProfileId>nightly</activeProfileId>
                 <dashboardName>NIGHTLY</dashboardName>
-                <productRelease></productRelease>
+                <productRelease>1.0</productRelease>
                 <graphitePrefix>gatling2.nightly</graphitePrefix>
             </properties>
         </profile>
