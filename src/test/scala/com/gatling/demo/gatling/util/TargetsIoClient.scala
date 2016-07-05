@@ -47,13 +47,14 @@ object TargetsIoClient {
           .postData(runningTestAsJson)
           .header("Content-Type", "application/json")
 
-        success = response.asString.code
-
-        println("success: " + success)
+//        success = response.asString.code
+//
+//        println("success: " + success)
 
         if (response.asString.code == 200) {
 
           println("Call to targets-io succeeded, " + command + "ing the test!")
+          success = 200
 
         } else {
 
