@@ -49,6 +49,9 @@
         <!-- Default sets build ID and activeProfileId to DEBUG so no events will be logged to the lt-dash server -->
         <activeProfileId>debug</activeProfileId>
 
+        <!-- By default, assertions are disabled -->
+        <assertResults>false</assertResults>
+
         <!-- Settings for the LTDashboard -->
         <productName>GATLING</productName>
         <productRelease>1.0</productRelease>
@@ -176,6 +179,7 @@
                         <jvmArg>-DbuildResultsUrl=${buildResultsUrl}</jvmArg>
                         <jvmArg>-DtestRunId=${testRunId}</jvmArg>
                         <jvmArg>-DuseProxy=${useProxy}</jvmArg>
+                        <jvmArg>-DassertResults=${assertResults}</jvmArg>
                         <jvmArg>-Dgatling.data.graphite.rootPathPrefix=${graphitePrefix}</jvmArg>
                         <jvmArg>-Xms256m</jvmArg>
                         <jvmArg>-Xmx256m</jvmArg>
@@ -318,9 +322,7 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <properties>
-                <applicationSimulation>com.gatling.demo.gatling.helpers.Assertions</applicationSimulation>
-                <dashboardName>NIGHTLY</dashboardName>
-                <testRunId>${env.PARENT_JOB_NAME}-${env.PARENT_BUILD_NUMBER}</testRunId>
+                <assertResults>true</assertResults>
             </properties>
         </profile>
 
