@@ -48,6 +48,8 @@ object TargetsIoClient {
           .header("Content-Type", "application/json")
 
         println("Response status code: " + response.asString.code)
+        println("Response body: " + response.asString.body)
+
 
         success = response.asString.code
 
@@ -106,6 +108,8 @@ def sendEndEvent(host: String, command: String, testRunId: String, buildResultsU
           .header("Content-Type", "application/json")
 
         println("Response status code: " + response.asString.code)
+        println("Response body: " + response.asString.body)
+
 
         success = response.asString.code
 
