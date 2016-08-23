@@ -69,7 +69,16 @@ object TargetsIoClient {
 
       } catch {
         case e: Exception =>
-          println("Exception occured: " + e);
+          println("Exception occured: " + e)
+          if (tries < 5) {
+            println("Retrying after 3 seconds...")
+            Thread.sleep(3000)
+            tries = tries + 1
+          } else {
+            println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
+            success = true
+          }
+
       }
     }
   }
@@ -149,7 +158,7 @@ object TargetsIoClient {
             tries = tries + 1
           } else {
             println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
-            success = true
+            System.exit(-1)
 
           }
         }
@@ -158,7 +167,15 @@ object TargetsIoClient {
 
         case e: Exception =>
           println("Exception occured: " + e)
-          tries = tries + 1
+          if (tries < 5) {
+            println("Retrying after 3 seconds...")
+            Thread.sleep(3000)
+            tries = tries + 1
+          } else {
+            println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
+            System.exit(-1)
+
+          }
       }
 
     }
