@@ -1,4 +1,4 @@
-package com.gatling.demo.gatling.util
+package com.gatling.demo.gatling.util		
 
 import io.gatling.core.Predef._
 
@@ -11,9 +11,11 @@ class TargetsIoSimulation extends Simulation {
   var targetsIoUrl : String = _
   var buildResultsUrl : String = _
   var productRelease : String = _
+  var assertResults : String = _
   if (System.getProperty("buildResultsUrl") != null) buildResultsUrl = System.getProperty("buildResultsUrl") else buildResultsUrl = "MANUAL_TEST"
   if (System.getProperty("targetsIoUrl") != null) targetsIoUrl = System.getProperty("targetsIoUrl") else targetsIoUrl = "http://dashboard.com"
   if (System.getProperty("productRelease") != null) productRelease = System.getProperty("productRelease") else productRelease = ""
+  if (System.getProperty("assertResults") != null) assertResults = System.getProperty("assertResults") else assertResults = "false"
 
   val dashboardName = System.getProperty("dashboardName")
   val productName = System.getProperty("productName")
@@ -25,7 +27,7 @@ class TargetsIoSimulation extends Simulation {
 
   def beforeSimulation() {
     if (testRunId != "DEBUG")
-      TargetsIoClient.sendEvent(targetsIoUrl, "start", testRunId,  buildResultsUrl, dashboardName, productName, productRelease)
+      TargetsIoClient.sendTestRunEvent(targetsIoUrl, "start", testRunId,  buildResultsUrl, dashboardName, productName, productRelease)
 
   }
 
@@ -35,9 +37,17 @@ class TargetsIoSimulation extends Simulation {
 
   def afterSimulation() {
 
-    if (testRunId != "DEBUG")
-      TargetsIoClient.sendEvent(targetsIoUrl, "end", testRunId, buildResultsUrl, dashboardName, productName, productRelease)
-
+    if (testRunId != "DEBUG") {
+      /* first make sure the test run is in running test state by sending a keepalive call! */
+      TargetsIoClient.sendTestRunEvent(targetsIoUrl, "keepalive", testRunId, buildResultsUrl, dashboardName, productName, productRelease)
+      Thread.sleep(1000) /* allow some time to persist the test run */
+      /* send end test run event*/
+      TargetsIoClient.sendTestRunEvent(targetsIoUrl, "end", testRunId, buildResultsUrl, dashboardName, productName, productRelease)
+      if (assertResults == "true"){
+        Thread.sleep(15000) /* allow some time to run the benchmarks */
+        TargetsIoClient.assertBenchmarkResults("http://targetsio:3000", testRunId, dashboardName, productName)
+      }
+    }
   }
 
   after {
