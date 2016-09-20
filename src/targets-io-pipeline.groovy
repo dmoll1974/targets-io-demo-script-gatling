@@ -1,4 +1,4 @@
-node('test') {
+node {
 
     def testRunId = env.JOB_NAME + "-" + env.BUILD_NUMBER
     def buildUrl = env.BUILD_URL
