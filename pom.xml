@@ -232,6 +232,7 @@
                 <dashboardName>GATLING-NIGHTLY</dashboardName>
                 <productRelease></productRelease>
                 <graphitePrefix>gatling2.nightly</graphitePrefix>
+                <testRunId>${productName}-${productRelease}-${activeProfileId}-${maven.build.timestamp}</testRunId>
             </properties>
         </profile>
 
