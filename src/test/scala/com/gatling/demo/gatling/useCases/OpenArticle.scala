@@ -41,7 +41,7 @@ object OpenArticle{
     /* Delete is article is by logged in user*/
     doIf("${isCurrentUserOwner}") {
       exec(http("Delete article")
-        .delete("/api/articles/575d35fc154f872300001289?$$state=%7B%22status%22:0%7D")
+        .delete("/api/articles/${articleId}?$$state=%7B%22status%22:0%7D")
         .headers(headers_1)
         .resources(http("List articles")
           .get("/api/articles")
