@@ -53,7 +53,7 @@
         <assertResults>false</assertResults>
         
         <!-- Settings for the LTDashboard -->
-        <productName>GATLING</productName>
+        <productName>MEAN</productName>
         <productRelease>1.0</productRelease>
         
     </properties>
@@ -198,7 +198,7 @@
             </activation>
             <properties>
                 <activeProfileId>stress</activeProfileId>
-                <dashboardName>STRESS</dashboardName>
+                <dashboardName>GATLING-STRESS</dashboardName>
                 <testRunId>${productName}-${productRelease}-${activeProfileId}-${maven.build.timestamp}</testRunId>
             </properties>
         </profile>
@@ -208,7 +208,7 @@
             </activation>
             <properties>
                 <activeProfileId>load</activeProfileId>
-                <dashboardName>LOAD</dashboardName>
+                <dashboardName>GATLING-LOAD</dashboardName>
                 <testRunId>${productName}-${productRelease}-${activeProfileId}-${maven.build.timestamp}</testRunId>
             </properties>
         </profile>
@@ -218,37 +218,18 @@
             </activation>
             <properties>
                 <activeProfileId>endurance</activeProfileId>
-                <dashboardName>ENDURANCE</dashboardName>
+                <dashboardName>GATLING-ENDURANCE</dashboardName>
                 <testRunId>${productName}-${productRelease}-${activeProfileId}-${maven.build.timestamp}</testRunId>
             </properties>
         </profile>
-        <profile>
-            <id>failover</id>
-            <activation>
-            </activation>
-            <properties>
-                <activeProfileId>failover</activeProfileId>
-                <dashboardName>FAILOVER</dashboardName>
-                <testRunId>${productName}-${productRelease}-${activeProfileId}-${maven.build.timestamp}</testRunId>
-            </properties>
-        </profile>
-        <profile>
-            <id>slowbackend</id>
-            <activation>
-            </activation>
-            <properties>
-                <activeProfileId>slowbackend</activeProfileId>
-                <dashboardName>SLOWBACKEND</dashboardName>
-                <testRunId>${productName}-${productRelease}-${activeProfileId}-${maven.build.timestamp}</testRunId>
-            </properties>
-        </profile>
+
         <profile>
             <id>nightly</id>
             <activation>
             </activation>
             <properties>
                 <activeProfileId>nightly</activeProfileId>
-                <dashboardName>NIGHTLY</dashboardName>
+                <dashboardName>GATLING-NIGHTLY</dashboardName>
                 <productRelease></productRelease>
                 <graphitePrefix>gatling2.nightly</graphitePrefix>
             </properties>
