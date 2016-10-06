@@ -45,7 +45,7 @@ class TargetsIoSimulation extends Simulation {
       TargetsIoClient.sendTestRunEvent(targetsIoUrl, "end", testRunId, buildResultsUrl, dashboardName, productName, productRelease)
       if (assertResults == "true"){
         Thread.sleep(15000) /* allow some time to run the benchmarks */
-        TargetsIoClient.assertBenchmarkResults("http://kl1267xi.is.klmcorp.net:10003", testRunId, dashboardName, productName)
+        TargetsIoClient.assertBenchmarkResults(targetsIoUrl, testRunId, dashboardName, productName)
       }
     }
   }
