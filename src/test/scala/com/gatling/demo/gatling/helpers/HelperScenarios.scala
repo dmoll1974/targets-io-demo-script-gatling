@@ -19,8 +19,7 @@ object HelperScenarios {
     */
 
   val runningTestKeepAliveScenario = scenario("Targets-io Keepalive")
-    .forever(
-     exec(session => session
+    .exec(session => session
       .set("productName", System.getProperty("productName"))
       .set("dashboardName", System.getProperty("dashboardName"))
       .set("testRunId", System.getProperty("testRunId"))
@@ -29,13 +28,15 @@ object HelperScenarios {
       .set("productRelease", System.getProperty("productRelease"))
       .set("rampUpPeriod", Configuration.rampUpPeriodInSeconds.toSeconds)
     )
-       .exec(http("Keep Alive")
-         .post("${targetsIoUrl}/running-test/keep-alive")
-         .body(StringBody("""{"testRunId":  "${testRunId}","dashboardName":  "${dashboardName}", "productName":  "${productName}", "buildResultsUrl":  "${buildResultsUrl}", "productRelease": "${productRelease}", "rampUpPeriod": "${rampUpPeriod}"}""")).asJSON
-        // .body(StringBody("""{"testRunId":  "${testRunId}","dashboardName":  "${dashboardName}", "productName":  "${productName}", "buildResultsUrl":  "${buildResultsUrl}", "productRelease": "${productRelease}"}""")).asJSON
-         .headers(targetsIoHeaders)
-         .silent
-       )
-    .pause(14 seconds)
-  )
+    .exec(
+      polling
+        .every(15 seconds)
+        .exec(http("Keep Alive")
+          .post("${targetsIoUrl}/running-test/keep-alive")
+          .body(StringBody("""{"testRunId":  "${testRunId}","dashboardName":  "${dashboardName}", "productName":  "${productName}", "productRelease":  "${productRelease}", "buildResultsUrl":  "${buildResultsUrl}", "rampUpPeriod":  "${rampUpPeriod}"}""")).asJSON
+          .headers(targetsIoHeaders)
+          .silent
+        )
+    )
+
 }
