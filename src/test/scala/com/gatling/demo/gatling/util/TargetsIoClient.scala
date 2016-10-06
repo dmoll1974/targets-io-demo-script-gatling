@@ -2,6 +2,8 @@ package com.gatling.demo.gatling.util
 
 import _root_.spray.json.DefaultJsonProtocol
 import com.google.gson.Gson
+import scala.util.control.Breaks._
+
 
 import spray.json._
 import scalaj.http._
@@ -31,54 +33,51 @@ object TargetsIoClient {
     val runningTestAsJson = new Gson().toJson(runningTest)
 
     var tries = 0
-    val maxTries = 6
-    var success = false
 
 
+    breakable {
+      for (i <- 0 to 5) {
 
-    while (tries < maxTries && success != true) {
-      try {
+        try {
 
+          tries += i
 
-        var response = Http(runningTestUrl)
-          .postData(runningTestAsJson)
-          .header("Content-Type", "application/json")
+          var response = Http(runningTestUrl)
+            .postData(runningTestAsJson)
+            .header("Content-Type", "application/json")
 
-        if (response.asString.code == 200) {
+          if (response.asString.code == 200) {
 
-          println("Call to targets-io succeeded, " + command + "ing the test!")
-          success = true
+            println("Call to targets-io succeeded, command sent: " + command + " test run")
+            break
 
-        } else {
-
-          println("Something went wrong in the call to targets-io, http status code: " + response.asString.code + ", body: " + response.asString.body)
-
-          if (tries < 5) {
-            println("Retrying after 3 seconds...")
-            Thread.sleep(3000)
-            tries = tries + 1
           } else {
-            println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
-            success = true
+
+            println("Something went wrong in the call to targets-io, http status code: " + response.asString.code + ", body: " + response.asString.body)
+
+            if (tries < 5) {
+              println("Retrying after 3 seconds...")
+              Thread.sleep(3000)
+            } else {
+              println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
+              break
+            }
+
+
           }
 
 
-
+        } catch {
+          case e: Exception =>
+            println("Exception occured: " + e);
+            if (tries < 5) {
+              println("Retrying after 3 seconds...")
+              Thread.sleep(3000)
+            } else {
+              println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
+              break
+            }
         }
-
-
-      } catch {
-        case e: Exception =>
-          println("Exception occured: " + e)
-          if (tries < 5) {
-            println("Retrying after 3 seconds...")
-            Thread.sleep(3000)
-            tries = tries + 1
-          } else {
-            println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
-            success = true
-          }
-
       }
     }
   }
@@ -86,102 +85,99 @@ object TargetsIoClient {
   def assertBenchmarkResults(host: String, testRunId: String, dashboardName: String, productName: String): Unit = {
 
     var tries = 0
-    val maxTries = 6
-    var success = false
+
     var assertionsOKCount = 0
     val assertTestRunUrl = host + "/benchmarks/" + productName + "/" + dashboardName + "/" + testRunId + "/"
 
-    while (tries < maxTries && success equals false) {
-      try {
+    breakable {
+      for (i <- 0 to 5) {
+        try {
 
-        println("Sending assertions call to " + assertTestRunUrl )
+          tries += i
 
-        var response = Http(assertTestRunUrl).header("Content-Type", "application/json")
-        var jsonAST = response.asString.body.parseJson
-        var benchmarks = jsonAST.convertTo[Benchmarks]
+          println("Sending assertions call to " + assertTestRunUrl)
 
-        if (response.asString.code == 200) {
-          success = true
-          println("Assertion call succeeded, checking benchmarks now..." )
+          var response = Http(assertTestRunUrl).header("Content-Type", "application/json")
+          var jsonAST = response.asString.body.parseJson
+          var benchmarks = jsonAST.convertTo[Benchmarks]
+
+          if (response.asString.code == 200) {
+            println("Assertion call succeeded, checking benchmarks now...")
+
+            if (benchmarks.meetsRequirement equals true) {
+              assertionsOKCount = assertionsOKCount + 1
+            } else {
+
+              println("******************************************************************************************************")
+              println("* Requirements results failed: " + host + "/#!/requirements/" + productName + "/" + dashboardName + "/" + testRunId + "/failed/")
+              println("******************************************************************************************************")
+
+            }
+
+            if (benchmarks.benchmarkResultPreviousOK equals true) {
+
+              assertionsOKCount = assertionsOKCount + 1
+
+            } else {
+
+              println("******************************************************************************************************")
+              println("* Benchmark to previous build results failed: " + host + "/#!/benchmark-previous-build/" + productName + "/" + dashboardName + "/" + testRunId + "/failed/")
+              println("******************************************************************************************************")
+            }
+
+            if (benchmarks.benchmarkResultFixedOK equals true) {
+
+              assertionsOKCount = assertionsOKCount + 1
+
+            } else {
+
+              println("******************************************************************************************************")
+              println("* Benchmark to fixed baseline results failed: " + host + "/#!/benchmark-fixed-baseline/" + productName + "/" + dashboardName + "/" + testRunId + "/failed/")
+              println("******************************************************************************************************")
+            }
 
 
-          if (benchmarks.meetsRequirement equals true) {
-            assertionsOKCount = assertionsOKCount + 1
+            if (assertionsOKCount < 3) {
+
+              println("******************************************************************************************************")
+              println("* Job failed due to one or more of the benchmarks failing, please check the logs above for details    *")
+              println("******************************************************************************************************")
+
+              System.exit(-1)
+            } else {
+
+              println("All benchmarks passed!")
+              break
+
+            }
           } else {
 
-            println("******************************************************************************************************")
-            println("* Requirements results failed: " + host + "/#!/requirements/" + productName + "/" + dashboardName + "/" + testRunId + "/failed/")
-            println("******************************************************************************************************")
+            if (tries < 5) {
+              println("Retrying after 3 seconds...")
+              Thread.sleep(3000)
+            } else {
+              println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
+              System.exit(-1)
 
+            }
           }
 
-          if (benchmarks.benchmarkResultPreviousOK equals true) {
+        } catch {
 
-            assertionsOKCount = assertionsOKCount + 1
+          case e: Exception =>
+            println("Exception occured: " + e)
+            if (tries < 5) {
+              println("Retrying after 3 seconds...")
+              Thread.sleep(3000)
+            } else {
+              println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
+              System.exit(-1)
 
-          } else {
-
-            println("******************************************************************************************************")
-            println("* Benchmark to previous build results failed: " + host + "/#!/benchmark-previous-build/" + productName + "/" + dashboardName + "/" + testRunId + "/failed/")
-            println("******************************************************************************************************")
-          }
-
-          if (benchmarks.benchmarkResultFixedOK equals true) {
-
-            assertionsOKCount = assertionsOKCount + 1
-
-          } else {
-
-            println("******************************************************************************************************")
-            println("* Benchmark to fixed baseline results failed: " + host + "/#!/benchmark-fixed-baseline/" + productName + "/" + dashboardName + "/" + testRunId + "/failed/")
-            println("******************************************************************************************************")
-          }
-
-
-          if (assertionsOKCount < 3) {
-
-            println("******************************************************************************************************")
-            println("* Job failed due to one or more of the benchmarks failing, please check the logs above for details    *")
-            println("******************************************************************************************************")
-
-            System.exit(-1)
-          }else{
-
-            println("All benchmarks passed!" )
-
-          }
-        }else{
-
-          if (tries < 5) {
-            println("Retrying after 3 seconds...")
-            Thread.sleep(3000)
-            tries = tries + 1
-          } else {
-            println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
-            System.exit(-1)
-
-          }
+            }
         }
-
-      } catch {
-
-        case e: Exception =>
-          println("Exception occured: " + e)
-          if (tries < 5) {
-            println("Retrying after 3 seconds...")
-            Thread.sleep(3000)
-            tries = tries + 1
-          } else {
-            println("Giving up after 5 attempts... please fix manually afterwards in the targets-io dashboard GUI.")
-            System.exit(-1)
-
-          }
       }
-
     }
 
   }
 }
 class targetsIoRunningTest( var productName: String, var dashboardName: String, var testRunId: String, var buildResultsUrl: String, var productRelease: String )
-
-

@@ -40,12 +40,12 @@ class TargetsIoSimulation extends Simulation {
     if (testRunId != "DEBUG") {
       /* first make sure the test run is in running test state by sending a keepalive call! */
       TargetsIoClient.sendTestRunEvent(targetsIoUrl, "keepalive", testRunId, buildResultsUrl, dashboardName, productName, productRelease)
-      Thread.sleep(1000) /* allow some time to persist the test run */
+      Thread.sleep(500) /* allow some time to persist the test run */
       /* send end test run event*/
       TargetsIoClient.sendTestRunEvent(targetsIoUrl, "end", testRunId, buildResultsUrl, dashboardName, productName, productRelease)
       if (assertResults == "true"){
         Thread.sleep(15000) /* allow some time to run the benchmarks */
-        TargetsIoClient.assertBenchmarkResults("http://targetsio:3000", testRunId, dashboardName, productName)
+        TargetsIoClient.assertBenchmarkResults("http://kl1267xi.is.klmcorp.net:10003", testRunId, dashboardName, productName)
       }
     }
   }
@@ -53,4 +53,5 @@ class TargetsIoSimulation extends Simulation {
   after {
     afterSimulation()
   }
+
 }
