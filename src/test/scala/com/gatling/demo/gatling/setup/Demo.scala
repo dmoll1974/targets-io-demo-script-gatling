@@ -86,6 +86,6 @@ class Demo extends TargetsIoSimulation {
 
 
   // Go!
-  setUp(runnableScenarios).protocols(if (Configuration.isDebugActive) Configuration.httpDebugProtocol else Configuration.httpProtocol).maxDuration(Configuration.rampUpPeriodInSeconds + Configuration.constantUsagePeriodInSeconds)
+  setUp(runnableScenarios).protocols(if (Configuration.isDebugActive) Configuration.httpDebugProtocol else Configuration.httpProtocol)
 
 }
