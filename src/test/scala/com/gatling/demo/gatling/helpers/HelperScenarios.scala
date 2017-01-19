@@ -27,13 +27,14 @@ object HelperScenarios {
       .set("targetsIoUrl", System.getProperty("targetsIoUrl"))
       .set("productRelease", System.getProperty("productRelease"))
       .set("rampUpPeriod", Configuration.rampUpPeriodInSeconds.toSeconds)
-    )
+      .set("duration", Configuration.rampUpPeriodInSeconds.toSeconds + Configuration.constantUsagePeriodInSeconds.toSeconds)
+     )     
     .exec(
       polling
         .every(15 seconds)
         .exec(http("Keep Alive")
           .post("${targetsIoUrl}/running-test/keep-alive")
-          .body(StringBody("""{"testRunId":  "${testRunId}","dashboardName":  "${dashboardName}", "productName":  "${productName}", "productRelease":  "${productRelease}", "buildResultsUrl":  "${buildResultsUrl}", "rampUpPeriod":  "${rampUpPeriod}"}""")).asJSON
+          .body(StringBody( """{"testRunId":  "${testRunId}","dashboardName":  "${dashboardName}", "productName":  "${productName}", "productRelease":  "${productRelease}", "buildResultsUrl":  "${buildResultsUrl}", "rampUpPeriod":  "${rampUpPeriod}", "duration":  "${duration}"}""")).asJSON
           .headers(targetsIoHeaders)
           .silent
         )
