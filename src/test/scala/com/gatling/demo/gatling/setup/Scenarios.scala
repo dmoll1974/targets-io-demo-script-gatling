@@ -17,7 +17,8 @@ object Scenarios {
    * These are the scenarios run in 'normal' mode.
    */
   val acceptanceTestScenario = scenario("acceptanceTestScenario")
-    .feed(UsersFeeder.users)
+    .feed(UsersFeeder.usersSignUp)
+    .feed(UsersFeeder.usersSignIn)
     .exitBlockOnFail(
       exec(Home.useCase)
       .repeat(2){
@@ -30,7 +31,7 @@ object Scenarios {
    * These are the scenarios run in 'debug' mode.
    */
   val debugScenario = scenario("debug")
-    .feed(UsersFeeder.users)
+    .feed(UsersFeeder.usersSignUp)
     .exec(Home.useCase)
     .exec(AddArticle.useCase)
     .exec(OpenArticle.useCase)

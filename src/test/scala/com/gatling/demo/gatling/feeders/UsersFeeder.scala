@@ -12,6 +12,7 @@ import io.gatling.jdbc.Predef._
  */
 object UsersFeeder {
 
-  val users = csv("users.csv").random
+  val usersSignUp = csv("users-signup.csv").circular
+  val usersSignin = csv("users-signin.csv").circular
 
 }
