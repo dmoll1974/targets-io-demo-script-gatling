@@ -6,6 +6,7 @@ import io.gatling.http.Predef._
 
 object OpenArticle{
 
+  val random = new java.util.Random
 
   val headers_2 = Map(
     "Cache-Control" -> "no-cache",
@@ -38,9 +39,9 @@ object OpenArticle{
       .check(jsonPath("$.isCurrentUserOwner").saveAs("isCurrentUserOwner"))
     )
     )
-    /* Delete is article is by logged in user*/
-//    doIf("${isCurrentUserOwner}") {
-      .exec(http("Delete article")
+    /* in 10% of the cases, try to delete article, even if not the woner*/
+  .doIfEquals(random.nextInt(10)+1 ,1) {
+      exec(http("Delete article")
         .delete("/api/articles/${articleId}?$$state=%7B%22status%22:0%7D")
         .headers(headers_1)
         .resources(http("List articles")
@@ -48,5 +49,5 @@ object OpenArticle{
           .headers(headers_1)
         )
       )
-//    }
+    }
 }
