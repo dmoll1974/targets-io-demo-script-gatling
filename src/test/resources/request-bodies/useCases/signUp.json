@@ -1,7 +1,7 @@
 {
-  "username": "${user-sign-up}",
-  "password": "${user-sign-up}Password!",
-  "firstName": "${user-sign-up}",
-  "lastName": "${user-sign-up}",
-  "email": "${user-sign-up}@demo.com"
+  "username": "${user}",
+  "password": "${user}Password!",
+  "firstName": "${user}",
+  "lastName": "${user}",
+  "email": "${user}@demo.com"
 }

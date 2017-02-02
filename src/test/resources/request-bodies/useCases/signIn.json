@@ -1,1 +1,1 @@
-{"username": "${user-sign-in}","password": "${password-sign-in}"}
+{"username": "${user}","password": "${user}Password!"}
