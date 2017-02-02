@@ -40,7 +40,7 @@ object OpenArticle{
     )
     /* Delete is article is by logged in user*/
 //    doIf("${isCurrentUserOwner}") {
-      exec(http("Delete article")
+      .exec(http("Delete article")
         .delete("/api/articles/${articleId}?$$state=%7B%22status%22:0%7D")
         .headers(headers_1)
         .resources(http("List articles")
