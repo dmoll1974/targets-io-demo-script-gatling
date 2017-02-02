@@ -29,7 +29,7 @@ object SignIn
     .headers(headers_0)
     .resources(http("SignIn - SignIn html")
       .get("/modules/users/client/views/authentication/signin.client.view.html"))
-    .check(status.is(304)))
+//    .check(status.is(304)))
     .pause(4)
     .exec(http("SignIn - Submit")
       .post("/api/auth/signin")
