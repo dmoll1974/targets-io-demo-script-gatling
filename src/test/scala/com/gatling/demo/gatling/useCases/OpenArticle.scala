@@ -39,15 +39,5 @@ object OpenArticle{
       .check(jsonPath("$.isCurrentUserOwner").saveAs("isCurrentUserOwner"))
     )
     )
-    /* in 10% of the cases, try to delete article, even if not the woner*/
-//  .doIfEquals(random.nextInt(10)+1 ,1) {
-      .exec(http("Delete article")
-        .delete("/api/articles/${articleId}?$$state=%7B%22status%22:0%7D")
-        .headers(headers_1)
-        .resources(http("List articles")
-          .get("/api/articles")
-          .headers(headers_1)
-        )
-      )
-//    }
+
 }

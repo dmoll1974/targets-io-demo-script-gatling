@@ -25,6 +25,9 @@ object Scenarios {
       }
       .exec(AddArticle.useCase)
       .exec(OpenArticle.useCase)
+      .randomSwitch(
+        10.0 -> exec(DeleteArticle.useCase)
+      )
     )
       /**
    * These are the scenarios run in 'debug' mode.
